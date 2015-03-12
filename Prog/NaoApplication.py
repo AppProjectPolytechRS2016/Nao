@@ -2,27 +2,35 @@ import sys
 
 from naoqi import ALProxy
 from Nao import *
-from Prog.Features import Features
-from Prog.Robot import Robot
-from Prog.initRobot import initRobot
+from Features import *
+from Robot import *
+from initRobot import *
 
-def __init__(self):
-       
-       self.features = []
-       self.robots = []
+class NaoApplication:
 
-def runFeatureOnRobot(self, feature, robot):
-       pass
-
-def main(self):
+       def __init__(self):
+              
+              self.features = []
+              self.robots = []
        
-       initRobot = initRobot()
-       self.features.add(initRobot)
+       def runFeatureOnRobot(self, feature, robot):
+              try:
+                   feature.runFeatureOnRobot(robot)
+              except Exception, e:
+                   print "Error was: ", e
        
+def main():
+              
+       na = NaoApplication()
+       
+       iR = initRobot()
+       na.features.append(iR)
        
        nao = Nao()
-       nao.standInit()
-
+       na.robots.append(nao)
+              
+       na.runFeatureOnRobot(iR, nao)
+       
 if __name__ == "__main__":
        main()
      

@@ -10,10 +10,6 @@ class Nao:
         self.NaoPort = 9559
         self.RobotIP = "127.0.0.1"
     
-    def getFeature(self):
-        'This method will execute the feature called'
-        
-        
     def standInit(self):
 
         try:

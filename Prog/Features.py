@@ -9,10 +9,6 @@ class Features(object):
        def __init__(self, name):
        
               self.name = name
-       
-       'TO DO'
-       def runFeatureOnRobot(self):
-             pass 
               
 Features.register(tuple)
 
