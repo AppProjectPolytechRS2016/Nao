@@ -2,7 +2,7 @@ import sys
 
 from abc import ABCMeta
 
-class Features(object):
+class Features:
     
        __metaclass__ = ABCMeta
 

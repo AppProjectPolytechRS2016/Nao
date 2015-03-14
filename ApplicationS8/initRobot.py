@@ -21,7 +21,6 @@ class initRobot(Features):
                print "Error was: ", e
                
        postureProxy.goToPosture("SitRelax", 1.0)
-       
 
     def runFeatureOnRobot(self, Nao):
            NaoApplication.runFeatureOnRobot(initRobot, Nao)
