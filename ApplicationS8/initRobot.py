@@ -1,5 +1,3 @@
-import sys
-
 from naoqi import ALProxy
 from Features import *
 from Nao import *
@@ -11,16 +9,16 @@ class initRobot(Features):
     'The posture chosen is SitRelax'
     
     def __init__(self):
+        self.name = "initRobot"
        
-       self.name = "initRobot"
-       
-       try:
-              postureProxy = ALProxy("ALRobotPosture", "127.0.0.1", 9559)
-       except Exception, e:
-               print "Could not create proxy to ALRobotPosture"
-               print "Error was: ", e
+    def initR(self):
+        try:
+            postureProxy = ALProxy("ALRobotPosture", "127.0.0.1", 9559)
+        except Exception, e:
+            print "Could not create proxy to ALRobotPosture"
+            print "Error was: ", e
                
-       postureProxy.goToPosture("SitRelax", 1.0)
+        postureProxy.goToPosture("SitRelax", 1.0)         
 
     def runFeatureOnRobot(self, Nao):
-           NaoApplication.runFeatureOnRobot(initRobot, Nao)
+        NaoApplication.runFeatureOnRobot(self.initR, Nao)

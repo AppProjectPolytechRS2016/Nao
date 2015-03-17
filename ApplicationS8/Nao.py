@@ -1,8 +1,6 @@
-import sys
-
 from naoqi import ALProxy
 
-class Nao:
+class Nao(object):
     'Common base class for all Nao'
     
     def __init__(self):
