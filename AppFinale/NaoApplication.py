@@ -33,10 +33,10 @@ def main():
     na.robots.append(nao)
     
     'Tests running different features on a specified robot'         
-    iR.runOnRobot(nao)
+    #iR.runOnRobot(nao)
     #sR.runOnRobot(nao)
     wA.runOnRobot(nao)
-    mR.runOnRobot(nao)
+    #mR.runOnRobot(nao)
        
 if __name__ == "__main__":
     main()
