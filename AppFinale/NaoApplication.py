@@ -14,7 +14,7 @@ def main():
     na = NaoApplication()
     
     'Initialization of a new robot Nao'  
-    nao = Nao("127.0.0.1",9559)
+    nao = Nao("193.48.125.63",9559)
     print nao
     
     'Initialization of the different features'  
@@ -22,6 +22,7 @@ def main():
     sR = stopRobot()
     wA = Walk()
     mR = Move(0,0,0) # Only working if the robot is standing !
+    kR = Kick()
     
     'Adding the features to the list of features of the NaoAppliaction instance'
     na.features.append(iR)
@@ -34,9 +35,10 @@ def main():
     
     'Tests running different features on a specified robot'         
     #iR.runOnRobot(nao)
-    #sR.runOnRobot(nao)
+    sR.runOnRobot(nao)
     #wA.runOnRobot(nao)
     #mR.runOnRobot(nao)
+    #kR.runOnRobot(nao)  #!!!! WARNING NOT FUNCTIONAL
        
 if __name__ == "__main__":
     main()
