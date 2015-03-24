@@ -71,7 +71,7 @@ class Walk(Features):
             print "Error was: ", e
         
         # Send NAO to Pose Init
-        postureProxy.goToPosture("StandInit", 0.5)
+        postureProxy.goToPosture("StandInit", 1.0)
         
         #####################
         ## Enable arms control by Walk algorithm
