@@ -69,11 +69,11 @@ def main():
     #kR.runOnRobot(nao)  #!!!! WARNING NOT FUNCTIONAL
     
     'Receiving Message from the Server'
-    server_msg = json.loads(s.recv(1024))
+    server_msg = s.recv(1024)
     
     'Printing the Message received'
     print ("Message received from the server: \n"+server_msg)
-       
+    
     'Closing the socket'
     s.close()
     print ("The socket has been closed")
