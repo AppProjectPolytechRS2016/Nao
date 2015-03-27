@@ -29,7 +29,7 @@ def main():
     sR = stopRobot()
     wA = Walk()
     mR = Move(0,0,0)
-    kR = Kick()
+    # kR = Kick() # NOT FUNCTIONAL
     
     'Adding the features to the list of features of the NaoAppliaction instance'
     na.features.append(iR)
@@ -49,8 +49,6 @@ def main():
     'Serializing Object Data to a JSON formated str'
     result_ident = json.dumps(data_ident)
     
-    print type(json.loads(result_ident)["MsgType"])
-    
     'New Socket Initialization'
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -67,20 +65,32 @@ def main():
     server_msg = s.recv(1024)
     
     'Main LOOP of the application'
-    while json.loads(json.dumps(s.recv(1024)))["MsgType"] != "End":
+    'We are testing here the JSON received to run the right feature'
+    while (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") != "End": # We are converting unicode into string in order to compare
         print ("Message received from the server: \n"+server_msg)
-        if json.loads(json.dumps(s.recv(1024)))["OrderName"] != "Init":
-            iR.runOnRobot(nao)
+        if (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") != "Order":
+            if (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Init":
+                iR.runOnRobot(nao)
+                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
+                result_ack = json.dumps(data_ack)
+                s.send(result_ack+"\r\n")
+                server_msg = s.recv(1024)
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Stop":
+                sR.runOnRobot(nao)
+                server_msg = s.recv(1024)
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Move":
+                mR.runOnRobot(nao)
+                server_msg = s.recv(1024)
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Walk":
+                wA.runOnRobot(nao)
+                server_msg = s.recv(1024)
     
     'Tests running different features on a specified robot'         
     #iR.runOnRobot(nao)
     #sR.runOnRobot(nao)
     #wA.runOnRobot(nao)
     #mR.runOnRobot(nao)
-    #kR.runOnRobot(nao)  #!!!! WARNING NOT FUNCTIONAL
-    
-    'Printing the Message received'
-    print ("Message received from the server: \n"+server_msg)
+    #kR.runOnRobot(nao)  # !!!! WARNING NOT FUNCTIONAL (motion.FRAME_ROBOT is missing)
     
     'Closing the socket'
     s.close()
