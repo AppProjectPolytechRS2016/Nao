@@ -146,7 +146,7 @@ class Move(Features):
     'the parameters are: x,y and theta'
     
     def __init__(self, x, y, theta):
-        self.name = "Walk"
+        self.name = "Move"
         self.x = x
         self.y = y
         self.theta = theta  

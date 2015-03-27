@@ -11,9 +11,6 @@ class NaoApplication:
           
         self.features = []
         self.robots = []
-        
-    def getNaoFeatures(self):
-        pass
    
 def main():
     
@@ -37,8 +34,13 @@ def main():
     na.features.append(wA)
     na.features.append(mR)
     
-    'Printing the List of the features'
-    print na.features
+    "Getting a list of Features name"
+    NaoFeaturesList = []
+    for i in range (0, len(na.features)):
+        featureName = na.features[i].name
+        NaoFeaturesList.append(featureName)
+    print ("Liste des fonctionnalites de Nao:")
+    print NaoFeaturesList
     
     'Adding the robot to the list of robots of the NaoApplication instance'
     na.robots.append(nao)
