@@ -157,6 +157,14 @@ class Move(Features):
         except Exception, e:
             print "Could not create proxy to ALMotion"
             print "Error was: ", e
+        try:
+            postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
+        except Exception, e:
+            print "Could not create proxy to ALRobotPosture"
+            print "Error was: ", e
+        
+        # Send NAO to Pose Init
+        postureProxy.goToPosture("StandInit", 1.0)
     
         #####################
         ## Enable arms control by move algorithm
