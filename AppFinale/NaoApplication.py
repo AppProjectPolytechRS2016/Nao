@@ -70,20 +70,25 @@ def main():
     'We are testing here the JSON received to run the right feature'
     while (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") != "End": # We are converting unicode into string in order to compare
         print ("Message received from the server: \n"+server_msg)
-        if (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") != "Order":
-            if (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Init":
+        if (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") == "Order":
+            if (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "ConnectTo":
+                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True, u'FeatureList':NaoFeaturesList}
+                result_ack = json.dumps(data_ack)
+                s.send(result_ack+"\r\n")
+                server_msg = s.recv(1024)
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Init":
                 iR.runOnRobot(nao)
                 data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 server_msg = s.recv(1024)
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Stop":
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Stop":
                 sR.runOnRobot(nao)
                 server_msg = s.recv(1024)
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Move":
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Move":
                 mR.runOnRobot(nao)
                 server_msg = s.recv(1024)
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") != "Walk":
+            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Walk":
                 wA.runOnRobot(nao)
                 server_msg = s.recv(1024)
     

@@ -5,5 +5,5 @@ result_ident = json.dumps(data_ident)
 data_converted = result_ident.encode("utf-8")
 
 print (json.loads(result_ident)["MsgType"]).encode("utf-8") != "End"
-print (json.loads(result_ident)["MsgType"]).encode("utf-8") != "Ident"
+print (json.loads(result_ident)["MsgType"]).encode("utf-8") == "Ident"
 print result_ident
