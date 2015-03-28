@@ -42,6 +42,14 @@ def main():
     print ("Liste des fonctionnalites de Nao:")
     print NaoFeaturesList
     
+   # "Getting the list of available robots"
+    #AvailableNao = []
+    #for j in range (0, len(na.robots)):
+    #    robotName = na.robots[i].name
+    #    AvailableNao.append(robotName)
+    #print ("List of available robots:")
+    #print AvailableNao
+    
     'Adding the robot to the list of robots of the NaoApplication instance'
     na.robots.append(nao)
     
