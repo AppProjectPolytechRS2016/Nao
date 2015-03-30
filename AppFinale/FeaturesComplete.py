@@ -6,6 +6,8 @@ import motion
 import almath as m # python's wrapping of almath
 
 from naoqi import ALProxy
+from naoqi import ALBroker
+from naoqi import ALModule
 from Robot import *
 from NaoApplication import *
 
@@ -81,9 +83,17 @@ class Walk(Features):
         except Exception, e:
             print "Could not create proxy to ALMemory"
             print "Error was: ", e
-            
+        
+        try:
+            tts = ALProxy("ALTextToSpeech", robotIP, 9559)
+        except Exception, e:
+            print "Could not create proxy to ALTextToSpeech"
+            print "Error was: ", e    
+ 
         # Send NAO to Pose Init
         postureProxy.goToPosture("StandInit", 1.0)
+        
+        tts.setLanguage("English")
         
         #####################
         ## Enable arms control by Walk algorithm
@@ -96,13 +106,21 @@ class Walk(Features):
         #####################
         motionProxy.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", True]])
         
-        memoryProxy.subscribeToEvent("Status", "BlockingObstacle", "AlreadyAtTarget", "DangerousObstacleDetected")
-        navigationProxy.moveTo(5.0, 0.0, 0.0)
-        navigationProxy.setSecurityDistance(0.5)
-        memoryProxy.raiseEvent("BlockingObstacle")
-        #navigationProxy.moveTo(0.0, 0.0, 0.0)
-        #navigationProxy.setSecurityDistance(0.5)
-        
+        start = time.time()
+
+        while time.time() - start < 10:
+            navigationProxy.moveTo(10.0, 0.0, 0.0)
+            if memoryProxy.getData("SonarLeftDetected"):
+                motionProxy.moveTo(0.0, 0.0, 1.54)
+                motionProxy.waitUntilMoveIsFinished()
+            elif memoryProxy.getData("SonarRightDetected"):
+                motionProxy.moveTo(0.0, 0.0, -1.54)
+                motionProxy.waitUntilMoveIsFinished()
+    
+        'Small message of end'
+        tts.say("WAALK FINISHED") #
+        print("Walk is over!")
+               
 class Move(Features):
     'Common base class for Move feature'  
     'The Robot moves in accordance by the parameters given'
@@ -263,6 +281,6 @@ class Kick(Features):
         postureProxy.goToPosture("StandInit", 1.0)
         
 
-#w = Walk()
-#nao = Nao("193.48.125.63",9559)
-#w.runOnRobot(nao)
+w = Walk()
+nao = Nao("193.48.125.63",9559)
+w.runOnRobot(nao)
