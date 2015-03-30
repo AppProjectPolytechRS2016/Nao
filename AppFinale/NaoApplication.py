@@ -63,7 +63,14 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     'Connection to ComManager'
-    s.connect(('193.48.125.64', 6030))
+    try:
+        s.connect(('193.48.125.68', 6030))
+ 
+    except socket.error:
+        print 'Socket connection failed! Host is unreachable! Exiting program'
+        s.close()
+        sys.exit(0)
+   
     
     'Sending the Ident Message to the Server'
     s.send(result_ident+"\r\n")
