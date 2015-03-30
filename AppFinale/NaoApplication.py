@@ -82,15 +82,15 @@ def main():
     while (json.loads(server_msg)["MsgType"]).encode("utf-8") != "End":
         if (json.loads(server_msg)["MsgType"]).encode("utf-8") == "Order":
             if (json.loads(server_msg)["OrderName"]).encode("utf-8") == "ConnectTo":
-                iR.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True, 'FeatureList':NaoFeaturesList}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
+                #iR.runOnRobot(nao)
                 server_msg = s.recv(1024).decode("utf-8")
                 print ("Message received from the server: \n"+server_msg)
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Init":
-                iR.runOnRobot(nao)
+                #iR.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
