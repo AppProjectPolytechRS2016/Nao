@@ -42,7 +42,7 @@ def main():
     print ("Liste des fonctionnalites de Nao:")
     print NaoFeaturesList
     
-   # "Getting the list of available robots"
+    # "Getting the list of available robots"
     #AvailableNao = []
     #for j in range (0, len(na.robots)):
     #    robotName = na.robots[i].name
@@ -54,7 +54,7 @@ def main():
     na.robots.append(nao)
     
     'JSON Object Initialization '
-    data_ident = {u'From':'193.48.125.67', u'To':'193.48.125.68', u'MsgType':'Ident', u'EquipmentType':'Robot'}
+    data_ident = {'From':'193.48.125.67', 'To':'193.48.125.64', 'MsgType':'Ident', 'EquipmentType':'Robot'}
     
     'Serializing Object Data to a JSON formated str'
     result_ident = json.dumps(data_ident)
@@ -63,7 +63,7 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     'Connection to ComManager'
-    s.connect(('193.48.125.68', 6030))
+    s.connect(('193.48.125.64', 6030))
     
     'Sending the Ident Message to the Server'
     s.send(result_ident+"\r\n")
@@ -73,53 +73,54 @@ def main():
     
     'Receiving Message from the Server'
     #server_msg = {u'From':'193.48.125.67', u'To':'193.48.125.68', u'MsgType':'Order', u'OrderName':'ConnectTo'}
-    server_msg = s.recv(1024)
-    
-    print ("Message received from the server: \n"+json.dumps(server_msg))
+    server_msg = s.recv(1024).decode("utf-8")
+    print type(server_msg)
+    print ("Message received from the server: \n"+server_msg)
     
     'Main LOOP of the application'
     'We are testing here the JSON received to run the right feature'
-    while (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") != "End": # We are converting unicode into string in order to compare
-        if (json.loads(json.dumps(server_msg))["MsgType"]).encode("utf-8") == "Order":
-            if (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "ConnectTo":
-                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True, u'FeatureList':NaoFeaturesList}
-                result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
-                print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024)
-                print ("Message received from the server: \n"+json.dumps(server_msg))
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Init":
+    while (json.loads(server_msg)["MsgType"]).encode("utf-8") != "End":
+        if (json.loads(server_msg)["MsgType"]).encode("utf-8") == "Order":
+            if (json.loads(server_msg)["OrderName"]).encode("utf-8") == "ConnectTo":
                 iR.runOnRobot(nao)
-                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True, 'FeatureList':NaoFeaturesList}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024)
-                print ("Message received from the server: \n"+json.dumps(server_msg))
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Stop":
+                server_msg = s.recv(1024).decode("utf-8")
+                print ("Message received from the server: \n"+server_msg)
+            elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Init":
+                iR.runOnRobot(nao)
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
+                result_ack = json.dumps(data_ack)
+                s.send(result_ack+"\r\n")
+                print ("Message sent to the server: \n"+result_ack)
+                server_msg = s.recv(1024).decode("utf-8")
+                print ("Message received from the server: \n"+server_msg)
+            elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Stop":
                 sR.runOnRobot(nao)
-                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024)
-                print ("Message received from the server: \n"+json.dumps(server_msg))
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Move":
+                server_msg = s.recv(1024).decode("utf-8")
+                print ("Message received from the server: \n"+server_msg)
+            elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Move":
                 mR.runOnRobot(nao)
-                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
                 server_msg = s.recv(1024)
                 print ("Message received from the server: \n"+json.dumps(server_msg))
-            elif (json.loads(json.dumps(server_msg))["OrderName"]).encode("utf-8") == "Walk":
+            elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Walk":
                 wA.runOnRobot(nao)
-                data_ack = {u'From':'193.48.125.67', u'To':(json.loads(json.dumps(server_msg))["From"]).encode("utf-8"), u'MsgType':'Ack', u'OrderAccepted':True}
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024)
-                print ("Message received from the server: \n"+json.dumps(server_msg))
+                server_msg = s.recv(1024).decode("utf-8")
+                print ("Message received from the server: \n"+server_msg)
     
     'Tests running different features on a specified robot'         
     #iR.runOnRobot(nao)
