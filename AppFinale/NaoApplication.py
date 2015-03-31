@@ -73,15 +73,23 @@ def main():
    
     
     'Sending the Ident Message to the Server'
-    s.send(result_ident+"\r\n")
+    try:
+        s.send(result_ident+"\r\n")
+    except socket.error, e:
+        print "Error sending data: %s" % e
+        sys.exit(1)
     
     'Printing the Message sent'
     print ("Message sent to the server: \n"+result_ident)
     
     'Receiving Message from the Server'
     #server_msg = {u'From':'193.48.125.67', u'To':'193.48.125.68', u'MsgType':'Order', u'OrderName':'ConnectTo'}
-    server_msg = s.recv(1024).decode("utf-8")
-    print type(server_msg)
+    try:
+        server_msg = s.recv(1024).decode("utf-8")
+    except socket.error, e:
+        print "Error receiving data: %s" % e
+        sys.exit(1)
+    #print type(server_msg)
     print ("Message received from the server: \n"+server_msg)
     
     'Main LOOP of the application'
@@ -93,11 +101,11 @@ def main():
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")
                 print ("Message sent to the server: \n"+result_ack)
-                #iR.runOnRobot(nao)
+                iR.runOnRobot(nao)
                 server_msg = s.recv(1024).decode("utf-8")
                 print ("Message received from the server: \n"+server_msg)
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Init":
-                #iR.runOnRobot(nao)
+                iR.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
                 s.send(result_ack+"\r\n")

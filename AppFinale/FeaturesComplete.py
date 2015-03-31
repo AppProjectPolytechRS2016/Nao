@@ -93,6 +93,7 @@ class Walk(Features):
         # Send NAO to Pose Init
         postureProxy.goToPosture("StandInit", 1.0)
         
+        # setting the language for Nao
         tts.setLanguage("English")
         
         #####################
@@ -280,7 +281,7 @@ class Kick(Features):
         # send robot to Pose Init
         postureProxy.goToPosture("StandInit", 1.0)
         
-
-w = Walk()
-nao = Nao("193.48.125.63",9559)
-w.runOnRobot(nao)
+"Testing Features"
+#w = Walk()
+#nao = Nao("193.48.125.63",9559)
+#w.runOnRobot(nao)
