@@ -1,5 +1,6 @@
 import socket
 import json
+import sys
 
 # IP Jerome : '193.48.125.68' port: 6030
 from FeaturesComplete import *
@@ -25,7 +26,7 @@ def main():
     iR = initRobot()
     sR = stopRobot()
     wA = Walk()
-    mR = Move(0,0,0)
+    mR = Move(1,0,0)
     # kR = Kick() # NOT FUNCTIONAL
     
     'Adding the features to the list of features of the NaoAppliaction instance'
@@ -64,13 +65,11 @@ def main():
     
     'Connection to ComManager'
     try:
-        s.connect(('193.48.125.68', 6030))
- 
+        s.connect(('193.48.125.64', 6030))
     except socket.error:
-        print 'Socket connection failed! Host is unreachable! Exiting program'
+        print 'Socket connection failed! Host is unreachable! Exiting program!'
         s.close()
         sys.exit(0)
-   
     
     'Sending the Ident Message to the Server'
     try:
@@ -99,42 +98,102 @@ def main():
             if (json.loads(server_msg)["OrderName"]).encode("utf-8") == "ConnectTo":
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True, 'FeatureList':NaoFeaturesList}
                 result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
                 iR.runOnRobot(nao)
-                server_msg = s.recv(1024).decode("utf-8")
+                try:
+                    server_msg = s.recv(1024).decode("utf-8")
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    sys.exit(1)
                 print ("Message received from the server: \n"+server_msg)
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Init":
-                iR.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024).decode("utf-8")
+                iR.runOnRobot(nao)
+                try:
+                    server_msg = s.recv(1024).decode("utf-8")
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message received from the server: \n"+server_msg)
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Stop":
-                sR.runOnRobot(nao)
-                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'End':True}
                 result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024).decode("utf-8")
+                data_log = {'From':'193.48.125.67', 'To':'193.48.125.64', 'MsgType':'Logout'}
+                result_logout = json.dumps(data_log)
+                try:
+                    s.send(result_logout+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
+                print ("Message sent to the server: \n"+result_logout)
+                sR.runOnRobot(nao)
+                #try:
+                #    server_msg = s.recv(1024).decode("utf-8")
+                #except socket.error, e:
+                #   print "Error receiving data: %s" % e
+                #    s.close()
+                #    sys.exit(1)
+                s.close()
+                sys.exit(1)
                 print ("Message received from the server: \n"+server_msg)
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Move":
-                mR.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024)
+                mR.runOnRobot(nao)
+                try:
+                    server_msg = s.recv(1024).decode("utf-8")
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message received from the server: \n"+json.dumps(server_msg))
             elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "Walk":
-                wA.runOnRobot(nao)
                 data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
                 result_ack = json.dumps(data_ack)
-                s.send(result_ack+"\r\n")
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
-                server_msg = s.recv(1024).decode("utf-8")
+                wA.runOnRobot(nao)
+                try:
+                    server_msg = s.recv(1024).decode("utf-8")
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    s.close()
+                    sys.exit(1)
                 print ("Message received from the server: \n"+server_msg)
     
     'Tests running different features on a specified robot'         

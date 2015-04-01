@@ -21,10 +21,10 @@ class Features:
 class initRobot(Features):
     'Common base class for initRobot feature'
     'The goal of this feature is to set a posture for the robot'
-    'The posture chosen is StandZero'
+    'The posture chosen is Stand'
     
     def __init__(self):
-        self.name = "initRobot"
+        self.name = "Init"
        
     def run(self, robotIP):
         try:
@@ -33,15 +33,15 @@ class initRobot(Features):
             print "Could not create proxy to ALRobotPosture"
             print "Error was: ", e
                
-        postureProxy.goToPosture("StandZero", 1.0)
+        postureProxy.goToPosture("Stand", 1.0)
         
 class stopRobot(Features):
     'Common base class for stopRobot feature'
     'The goal of this feature is to set a posture for the robot'
-    'The posture chosen is SitRelax'
+    'The posture chosen is LyingBack'
     
     def __init__(self):
-        self.name = "stopRobot"
+        self.name = "Stop"
        
     def run(self, robotIP):
         try:
@@ -50,7 +50,7 @@ class stopRobot(Features):
             print "Could not create proxy to ALRobotPosture"
             print "Error was: ", e
                
-        postureProxy.goToPosture("SitRelax", 1.0)
+        postureProxy.goToPosture("LyingBack", 1.0)
         
 class Walk(Features):
     'Common base class for Walk feature'  
@@ -109,8 +109,8 @@ class Walk(Features):
         
         start = time.time()
 
-        while time.time() - start < 10:
-            navigationProxy.moveTo(10.0, 0.0, 0.0)
+        while time.time() - start < 30:
+            navigationProxy.moveTo(5.0, 0.0, 0.0)
             if memoryProxy.getData("SonarLeftDetected"):
                 motionProxy.moveTo(0.0, 0.0, 1.54)
                 motionProxy.waitUntilMoveIsFinished()
@@ -163,7 +163,7 @@ class Move(Features):
         #####################
         ## get robot position before move
         #####################
-        initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
+        #initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
     
         X = self.x
         Y = self.y
@@ -176,13 +176,13 @@ class Move(Features):
         #####################
         ## get robot position after move
         #####################
-        endRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
+        #endRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
     
         #####################
         ## compute and print the robot motion
         #####################
-        robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
-        print "Robot Move :", robotMove
+        #robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
+        #print "Robot Move :", robotMove
 
 class Kick(Features):
      
