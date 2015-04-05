@@ -27,6 +27,7 @@ def main():
     sR = stopRobot()
     wA = Walk()
     mR = Move(1,0,0)
+    tP = TakePicture()
     # kR = Kick() # NOT FUNCTIONAL
     
     'Adding the features to the list of features of the NaoAppliaction instance'
@@ -34,6 +35,7 @@ def main():
     na.features.append(sR)
     na.features.append(wA)
     na.features.append(mR)
+    na.features.append(tP)
     
     "Getting a list of Features name"
     NaoFeaturesList = []
@@ -170,6 +172,24 @@ def main():
                     sys.exit(1)
                 print ("Message sent to the server: \n"+result_ack)
                 mR.runOnRobot(nao)
+                try:
+                    server_msg = s.recv(1024).decode("utf-8")
+                except socket.error, e:
+                    print "Error receiving data: %s" % e
+                    s.close()
+                    sys.exit(1)
+                print ("Message received from the server: \n"+json.dumps(server_msg))
+            elif (json.loads(server_msg)["OrderName"]).encode("utf-8") == "TakePicture":
+                data_ack = {'From':'193.48.125.67', 'To':(json.loads(server_msg)["From"]).encode("utf-8"), 'MsgType':'Ack', 'OrderAccepted':True}
+                result_ack = json.dumps(data_ack)
+                try:
+                    s.send(result_ack+"\r\n")
+                except socket.error, e:
+                    print "Error sending data: %s" % e
+                    s.close()
+                    sys.exit(1)
+                print ("Message sent to the server: \n"+result_ack)
+                tP.runOnRobot(nao)
                 try:
                     server_msg = s.recv(1024).decode("utf-8")
                 except socket.error, e:
