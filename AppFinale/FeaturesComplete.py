@@ -11,7 +11,6 @@ from naoqi import ALBroker
 from naoqi import ALModule
 from Robot import *
 from NaoApplication import *
-from Test.videoInput_getImage import colorSpace
 
 class Features:
     def __init__(self, name):
@@ -35,7 +34,7 @@ class initRobot(Features):
             print "Could not create proxy to ALRobotPosture"
             print "Error was: ", e
                
-        postureProxy.goToPosture("Stand", 1.0)
+        postureProxy.goToPosture("Stand", 0.8)
         
 class stopRobot(Features):
     'Common base class for stopRobot feature'
@@ -52,7 +51,7 @@ class stopRobot(Features):
             print "Could not create proxy to ALRobotPosture"
             print "Error was: ", e
                
-        postureProxy.goToPosture("LyingBack", 1.0)
+        postureProxy.goToPosture("LyingBack", 0.7)
         
 class Walk(Features):
     'Common base class for Walk feature'  
@@ -93,7 +92,7 @@ class Walk(Features):
             print "Error was: ", e    
  
         # Send NAO to Pose Init
-        postureProxy.goToPosture("StandInit", 1.0)
+        postureProxy.goToPosture("StandInit", 0.5)
         
         # setting the language for Nao
         tts.setLanguage("English")
@@ -146,45 +145,23 @@ class Move(Features):
         except Exception, e:
             print "Could not create proxy to ALRobotPosture"
             print "Error was: ", e
+        try:
+            navigationProxy = ALProxy("ALNavigation", robotIP, 9559)
+        except Exception, e:
+            print "Could not create proxy to ALRobotNavigation"
+            print "Error was: ", e
         
         # Send NAO to Pose Init
-        postureProxy.goToPosture("StandInit", 1.0)
+        postureProxy.goToPosture("StandInit", 0.6)
     
-        #####################
-        ## Enable arms control by move algorithm
-        #####################
-        motionProxy.setWalkArmsEnabled(True, True)
-        #~ motionProxy.setWalkArmsEnabled(False, False)
-    
-        #####################
-        ## FOOT CONTACT PROTECTION
-        #####################
-        #~ motionProxy.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION",False]])
-        motionProxy.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", True]])
-    
-        #####################
-        ## get robot position before move
-        #####################
-        #initRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
-    
+        navigationProxy.setSecurityDistance(0.5)
+        
         X = self.x
         Y = self.y
         Theta = self.theta
 
-        motionProxy.post.moveTo(X, Y, Theta)
-        # wait is useful because with post moveTo is not blocking function
-        motionProxy.waitUntilMoveIsFinished()
+        navigationProxy.moveTo(X, Y, Theta)
     
-        #####################
-        ## get robot position after move
-        #####################
-        #endRobotPosition = m.Pose2D(motionProxy.getRobotPosition(False))
-    
-        #####################
-        ## compute and print the robot motion
-        #####################
-        #robotMove = m.pose2DInverse(initRobotPosition)*endRobotPosition
-        #print "Robot Move :", robotMove
 class TakePicture(Features):
     
     def __init__(self):
@@ -230,6 +207,45 @@ class TakePicture(Features):
         im.save("camImage.png", "PNG")
         
         im.show()
+        
+class Mime(Features):
+    
+    def __init__(self, LShoulderPitch, LShoulderRoll, LElbowYaw, LElbowRoll, RShoulderPitch, RShoulderRoll, RElbowYaw, RElbowRoll):
+        self.name = "Mime"
+        self.LShoulderPitch = LShoulderPitch
+        self.LShoulderRoll = LShoulderRoll
+        self.LElbowYaw = LElbowYaw
+        self.LElbowRoll = LElbowRoll
+        self.RShoulderPitch = RShoulderPitch
+        self.RShoulderRoll = RShoulderRoll
+        self.RElbowYaw = RElbowYaw
+        self.RElbowRoll = RElbowRoll
+    
+    def run(self, robotIP):
+        # Init proxies
+        try:
+            motionProxy = ALProxy("ALMotion", robotIP, 9559)
+        except Exception, e:
+            print "Could not create proxy to ALMotion"
+            print "Error was: ", e
+            sys.exit(1)
+        try:
+            postureProxy = ALProxy("ALRobotPosture", robotIP, 9559)
+        except Exception, e:
+            print "Could not create proxy to ALRobotPosture"
+            print "Error was: ", e
+    
+        # Send NAO to Pose Init
+        postureProxy.goToPosture("StandInit", 1.0)
+        
+        #Test example with two joints
+        names = ["LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll", "RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll"]
+        angleLists = [self.LShoulderPitch, self.LShoulderRoll, self.LElbowYaw, self.LElbowRoll, self.RShoulderPitch, self.RShoulderRoll, self.RElbowYaw, self.RElbowRoll]
+        fractionMaxSpeed = 0.3
+        
+        motionProxy.setAngles(names, angleLists, fractionMaxSpeed)
+        
+        time.sleep(5.0)
         
 class Kick(Features):
      
@@ -329,6 +345,7 @@ class Kick(Features):
         postureProxy.goToPosture("StandInit", 1.0)
         
 "Testing Features"
-#w = Walk()
-#nao = Nao("193.48.125.63",9559)
-#w.runOnRobot(nao)
+#mM = Mime()
+#nao = Nao("127.0.0.1",9559)
+#mM.runOnRobot(nao)
+
