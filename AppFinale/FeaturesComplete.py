@@ -229,10 +229,14 @@ class Mime(Features):
         self.RElbowRoll = RElbowRoll
     '''
     
-    def __init__(self, LShoulderPitch, LShoulderRoll):
+    def __init__(self, LShoulderPitch, LShoulderRoll, LElbowRoll, RShoulderPitch, RShoulderRoll, RElbowRoll):
         self.name = "Mime"
         self.LShoulderPitch = LShoulderPitch
         self.LShoulderRoll = LShoulderRoll
+        self.LElbowRoll = LElbowRoll
+        self.RShoulderPitch = RShoulderPitch
+        self.RShoulderRoll = RShoulderRoll
+        self.RElbowRoll = RElbowRoll
         
     def run(self, robotIP):
         # Init proxies
@@ -249,14 +253,14 @@ class Mime(Features):
             print "Error was: ", e
     
         # Send NAO to Pose Init
-        postureProxy.goToPosture("StandInit", 1.0)
+        postureProxy.goToPosture("Stand", 1.0)
         
         #Test example with two joints
         #names = ["LShoulderPitch", "LShoulderRoll", "LElbowYaw", "LElbowRoll", "RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RElbowRoll"]
         #angleLists = [self.LShoulderPitch, self.LShoulderRoll, self.LElbowYaw, self.LElbowRoll, self.RShoulderPitch, self.RShoulderRoll, self.RElbowYaw, self.RElbowRoll]
         
-        names = ["LShoulderPitch", "LShoulderRoll"]
-        angleLists = [self.LShoulderPitch, self.LShoulderRoll]
+        names = ["LShoulderPitch", "LShoulderRoll", "LElbowRoll", "RShoulderPitch", "RShoulderRoll", "RElbowRoll"]
+        angleLists = [self.LShoulderPitch, self.LShoulderRoll, self.LElbowRoll, self.RShoulderPitch, self.RShoulderRoll, self.RElbowRoll]
         fractionMaxSpeed = 0.3
         
         motionProxy.setAngles(names, angleLists, fractionMaxSpeed)
